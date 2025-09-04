@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para almacenar reseñas en tu base de datos de Neon
+model Review {
+  id                 String    @id @default(uuid())
+  shopifyProductId   BigInt    // Shopify Product ID
+  shopifyMetaobjectId String?  @unique // ID del metaobject en Shopify, si se creó
+  rating             Int
+  title              String?
+  body               String
+  authorName         String
+  authorEmail        String?
+  isVerifiedBuyer    Boolean   @default(false)
+  isApproved         Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  imageUrl           String?   // URL de la imagen si se subió
+}

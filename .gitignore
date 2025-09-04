@@ -1,0 +1,50 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm/
+.yarn/
+
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build/Output
+build/
+dist/
+tmp/
+*.log
+logs/ # Directorio para logs de aplicación
+
+# Prisma
+# Estos son los archivos generados por Prisma Client
+# El cliente de Prisma se instala en node_modules,
+# pero en algunos casos, se pueden generar otros archivos
+# Si generas el cliente en una ubicación personalizada, añádelo aquí.
+# Por defecto, el cliente se guarda en node_modules/.prisma/client/
+# Así que node_modules/ ya lo cubre.
+# Las migraciones sí deben estar en el repo: prisma/migrations/
+# Pero puedes ignorar el directorio completo si lo gestionas de otra manera:
+# prisma/migrations/
+
+# Docker
+.dockerignore
+
+# IDEs and Editors
+.vscode/        # VSCode
+.idea/          # IntelliJ/WebStorm
+*.sublime-project
+*.sublime-workspace
+.project
+.DS_Store       # macOS
+Thumbs.db       # Windows
+
+# Misc
+*.swp
+*.bak
+*.swo
