@@ -4,21 +4,40 @@ const config = {
   port: process.env.PORT || 3001,
   shopify: {
     storeDomain: process.env.SHOPIFY_STORE_DOMAIN,
-    accessToken: process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN,
-    apiVersion: process.env.SHOPIFY_API_VERSION,
+    adminApiAccessToken: process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN,
+    apiKey: process.env.SHOPIFY_API_KEY,
+    secretApiKey: process.env.SHOPIFY_SECRET_API_KEY,
+    apiVersion: "2024-01",
+    graphqlEndpoint: `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-01/graphql.json`,
   },
-  corsOrigin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : [],
-  databaseUrl: process.env.DATABASE_URL,
+  cors: {
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(",")
+      : ["http://localhost:3000"],
+    credentials: true,
+  },
+  rateLimit: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  },
+  upload: {
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+    allowedTypes: [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "video/mp4",
+      "video/webm",
+    ],
+  },
 };
 
-// Validar que las variables de Shopify estén presentes
-if (
-  !config.shopify.storeDomain ||
-  !config.shopify.accessToken ||
-  !config.shopify.apiVersion
-) {
-  console.error("Missing Shopify API credentials in .env file.");
-  process.exit(1);
+// Validation
+if (!config.shopify.storeDomain) {
+  throw new Error("SHOPIFY_STORE_DOMAIN is required");
+}
+if (!config.shopify.adminApiAccessToken) {
+  throw new Error("SHOPIFY_ADMIN_API_ACCESS_TOKEN is required");
 }
 
 module.exports = config;

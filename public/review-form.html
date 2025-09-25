@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Review - Joystaz Jeans</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .review-form {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .rating-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star.active,
+        .star:hover {
+            color: #f39c12;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-upload:hover {
+            background: #2980b9;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .review-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="review-form">
+            <div class="form-header">
+                <h1>Write a Review</h1>
+                <p>Share your experience with this product</p>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="productId">Product ID *</label>
+                    <input type="number" id="productId" name="productId" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Overall Rating *</label>
+                    <div class="rating-group">
+                        <div class="star-rating" id="overallRating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <span id="ratingText">Click to rate</span>
+                    </div>
+                    <input type="hidden" id="rating" name="rating" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Review Title *</label>
+                    <input type="text" id="title" name="title" maxlength="200" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="body">Review *</label>
+                    <textarea id="body" name="body" maxlength="2000"
+                        placeholder="Tell us about your experience with this product..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="authorName">Your Name *</label>
+                        <input type="text" id="authorName" name="authorName" maxlength="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="authorEmail">Your Email *</label>
+                        <input type="email" id="authorEmail" name="authorEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ageRange">Age Range</label>
+                        <select id="ageRange" name="ageRange">
+                            <option value="">Select age range</option>
+                            <option value="18-24">18-24</option>
+                            <option value="25-34">25-34</option>
+                            <option value="35-44">35-44</option>
+                            <option value="45-54">45-54</option>
+                            <option value="55-64">55-64</option>
+                            <option value="65+">65+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sizePurchased">Size Purchased</label>
+                        <input type="text" id="sizePurchased" name="sizePurchased" maxlength="50"
+                            placeholder="e.g., M, L, XL">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fit Rating *</label>
+                        <div class="rating-group">
+                            <div class="star-rating" id="fitRating">
+                                <span class="star" data-rating="1">★</span>
+                                <span class="star" data-rating="2">★</span>
+                                <span class="star" data-rating="3">★</span>
+                                <span class="star" data-rating="4">★</span>
+                                <span class="star" data-rating="5">★</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fitRatingValue" name="fitRating" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Shipping Rating</label>
+                        <div class="rating-group">
+                            <div class="star-rating" id="shippingRating">
+                                <span class="star" data-rating="1">★</span>
+                                <span class="star" data-rating="2">★</span>
+                                <span class="star" data-rating="3">★</span>
+                                <span class="star" data-rating="4">★</span>
+                                <span class="star" data-rating="5">★</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="shippingRatingValue" name="shippingRating">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="isVerifiedBuyer" name="isVerifiedBuyer">
+                        <label for="isVerifiedBuyer">I am a verified buyer of this product</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="recommendsProduct" name="recommendsProduct">
+                        <label for="recommendsProduct">I recommend this product</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Images/Videos (Optional)</label>
+                    <div class="file-upload">
+                        <input type="file" id="mediaFiles" name="mediaFiles" multiple accept="image/*,video/*">
+                        <span>Choose Files</span>
+                    </div>
+                    <small>You can upload images (JPG, PNG, GIF) or videos (MP4, WebM). Max 5MB per file.</small>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit Review
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Submitting your review...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:3001/api/reviews';
+
+        // Star rating functionality
+        function initializeStarRating(containerId, inputId, textElementId = null) {
+            const container = document.getElementById(containerId);
+            const input = document.getElementById(inputId);
+            const textElement = textElementId ? document.getElementById(textElementId) : null;
+            const stars = container.querySelectorAll('.star');
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    const rating = index + 1;
+                    input.value = rating;
+
+                    // Update star display
+                    stars.forEach((s, i) => {
+                        s.classList.toggle('active', i < rating);
+                    });
+
+                    // Update text if provided
+                    if (textElement) {
+                        const ratingTexts = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+                        textElement.textContent = ratingTexts[rating] || 'Click to rate';
+                    }
+                });
+
+                star.addEventListener('mouseenter', () => {
+                    stars.forEach((s, i) => {
+                        s.classList.toggle('active', i <= index);
+                    });
+                });
+            });
+
+            container.addEventListener('mouseleave', () => {
+                const currentRating = parseInt(input.value) || 0;
+                stars.forEach((s, i) => {
+                    s.classList.toggle('active', i < currentRating);
+                });
+            });
+        }
+
+        // Initialize star ratings
+        initializeStarRating('overallRating', 'rating', 'ratingText');
+        initializeStarRating('fitRating', 'fitRatingValue');
+        initializeStarRating('shippingRating', 'shippingRatingValue');
+
+        // Form submission
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const alertContainer = document.getElementById('alert-container');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            form.style.display = 'none';
+            alertContainer.innerHTML = '';
+
+            try {
+                // Prepare data
+                const data = {
+                    productId: parseInt(formData.get('productId')),
+                    rating: parseInt(formData.get('rating')),
+                    title: formData.get('title'),
+                    body: formData.get('body'),
+                    authorName: formData.get('authorName'),
+                    authorEmail: formData.get('authorEmail'),
+                    isVerifiedBuyer: formData.get('isVerifiedBuyer') === 'on',
+                    ageRange: formData.get('ageRange') || undefined,
+                    sizePurchased: formData.get('sizePurchased') || undefined,
+                    fitRating: formData.get('fitRating') ? parseInt(formData.get('fitRating')) : undefined,
+                    shippingRating: formData.get('shippingRating') ? parseInt(formData.get('shippingRating')) : undefined,
+                    recommendsProduct: formData.get('recommendsProduct') === 'on'
+                };
+
+                // Make API request
+                const response = await fetch(API_BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', 'Thank you! Your review has been submitted and is pending approval.');
+                    form.reset();
+                    // Reset star ratings
+                    document.querySelectorAll('.star-rating .star').forEach(star => {
+                        star.classList.remove('active');
+                    });
+                    document.getElementById('ratingText').textContent = 'Click to rate';
+                } else {
+                    showAlert('error', result.message || 'Failed to submit review. Please try again.');
+                }
+
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                showAlert('error', 'An error occurred while submitting your review. Please try again.');
+            } finally {
+                // Hide loading state
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+                form.style.display = 'block';
+            }
+        });
+
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            alertContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+        }
+
+        // File upload preview (optional enhancement)
+        document.getElementById('mediaFiles').addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                console.log(`${files.length} file(s) selected`);
+                // You could add file preview functionality here
+            }
+        });
+    </script>
+</body>
+
+</html>
